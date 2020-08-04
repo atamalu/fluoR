@@ -42,7 +42,9 @@ the observed values of each trial are in the following rows or columns.
 ``` r
 ### Format data
 df <- format_data(GCaMP)
+```
 
+``` r
 ### What does the median value of trials 1, 2, 3, and 4 look like?
 head( summarize_trials(dataframe = df, trials = 1:4, summary.type = 'median') )
 #>      Time summ.trials
@@ -52,15 +54,21 @@ head( summarize_trials(dataframe = df, trials = 1:4, summary.type = 'median') )
 #> 4 -3.9607     82.8565
 #> 5 -3.9508     82.8985
 #> 6 -3.9410     82.9365
+```
 
+``` r
 ### Where are the inflection points (peaks/valleys) in trial 1?
 head( inflect_points(x = df$Trial1) )
 #> [1] 0 2 0 0 0 0
+```
 
+``` r
 ### Where are the peaks in trial 1 with at least 10 decreasing values on 
 head( find_peaks(xvals = df$Trial1, n.points = 10) )
 #> [1]   8  27  44  78 100 122
+```
 
+``` r
 ### Transform raw input values into modified z-scores (using median & mad) for trial 1
 head( z_score(xvals = df$Trial1, z.type = 'modified') )
 #> [1] 0.5840103 0.4935298 0.4770788 0.5346573 0.6470724 0.7704549

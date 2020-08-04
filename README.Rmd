@@ -40,16 +40,24 @@ Since there is currently no ubiquitous way to analyze or format calcium imaging 
 ```{r, message = FALSE}
 ### Format data
 df <- format_data(GCaMP)
+```
 
+```{r, message = FALSE}
 ### What does the median value of trials 1, 2, 3, and 4 look like?
 head( summarize_trials(dataframe = df, trials = 1:4, summary.type = 'median') )
+```
 
+```{r, message = FALSE}
 ### Where are the inflection points (peaks/valleys) in trial 1?
 head( inflect_points(x = df$Trial1) )
+```
 
+```{r, message = FALSE}
 ### Where are the peaks in trial 1 with at least 10 decreasing values on 
 head( find_peaks(xvals = df$Trial1, n.points = 10) )
+```
 
+```{r, message = FALSE}
 ### Transform raw input values into modified z-scores (using median & mad) for trial 1
 head( z_score(xvals = df$Trial1, z.type = 'modified') )
 ```
