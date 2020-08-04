@@ -187,11 +187,19 @@ t1thru5 <- baseline_transform(dataframe = df,
 print(head(t1thru5))
 ```
 
-Alternatively, we can use `type = z_standard` or `type = z_modified`
+Alternatively, we can use `type = 'z_standard'` or `type = 'z_modified'`
 
-### inflect_trials_df
+### inflect_points_trials
 
-`inflect_trials_df` is a dataframe-based version of `inflect_trials`. This 
+`inflect_points_trials` is a dataframe-based version of `inflect_trials`. This allows the user to simultaneously find inflection points for multiple trials, without extracting each one.
+
+To find inflection points for trials 1-5, we'd use
+
+```{r}
+inf.pts.df <- inflect_points_trials(dataframe = df,
+                                    trials = 1:5)
+print(head(inf.pts.df))
+```
 
 ### plot_trials
 
