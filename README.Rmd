@@ -22,11 +22,13 @@ Calcium imaging methods produce massive datasets that require immense data manip
 * `find_peaks` uses an algorithm to find peaks/valleys with n points increasing/decreasing on each side
 * `z_score` calculates a standard or modified z-score without adding R object attributes
 
+The Examples vignette explains these functions and more in greater detail. This can be viewed using `browseVignettes('fluoR')`.
+
 ## Installation
 
 ```{r, eval = FALSE}
 ### Install from Github
-install.packages("atamalu/fluoR")
+devtools::install_github('atamalu/fluoR', build_vignettes = TRUE)
 ```
 
 ```{r}

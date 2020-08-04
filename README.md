@@ -18,12 +18,15 @@ any type of waveform data. A few functions include:
 -   `z_score` calculates a standard or modified z-score without adding R
     object attributes
 
+The Examples vignette explains these functions and more in greater
+detail. This can be viewed using `browseVignettes('fluoR')`.
+
 Installation
 ------------
 
 ``` r
 ### Install from Github
-install.packages("atamalu/fluoR")
+devtools::install_github('atamalu/fluoR', build_vignettes = TRUE)
 ```
 
 ``` r
