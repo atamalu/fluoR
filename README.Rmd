@@ -1,0 +1,51 @@
+---
+output:
+  md_document:
+    variant: markdown_github
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "README-"
+)
+```
+
+# fluoR
+
+Calcium imaging methods produce massive datasets that require immense data manipulation, exploration, and summarizing. fluoR provides highly-accessible functions to address these issues for both inexperienced and seasoned R users to save researchers time. This package is catered to live-recorded fluorescence data, but works with any type of waveform data. A few functions include:
+
+* `format_data` converts a data frame or matrix to a fluoR-friendly format
+* `summarize_trials` calculates a summary statistic; collapsing across trials for each timestamp
+* `inflect_points` finds inflection points by using derivatives
+* `find_peaks` uses an algorithm to find peaks/valleys with n points increasing/decreasing on each side
+* `z_score` calculates a standard or modified z-score without adding R object attributes
+
+## Installation
+
+```{r, eval = FALSE}
+### Install from Github
+install.packages("atamalu/fluoR")
+```
+
+## Getting started
+
+Since there is currently no ubiquitous way to analyze or format calcium imaging data, most of fluoR's commands require the data frame to be in "fluoR format." This is essentially a transposed time series data frame; where the times of recorded signals are in the first row or column, and the observed values of each trial are in the following rows or columns.
+
+```{r, message = FALSE}
+### Format data
+df <- format_data(GCaMP)
+
+### What does the median value of trials 1, 2, 3, and 4 look like?
+head( summarize_trials(dataframe = df, trials = 1:4, summary.type = 'median') )
+
+### Where are the inflection points (peaks/valleys) in trial 1?
+head( inflect_points(x = df$Trial1) )
+
+### Where are the peaks in trial 1 with at least 10 decreasing values on 
+head( find_peaks(xvals = df$Trial1, n.points = 10) )
+
+### Transform raw input values into modified z-scores (using median & mad) for trial 1
+head( z_score(xvals = df$Trial1, z.type = 'modified') )
+```

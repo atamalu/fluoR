@@ -1,0 +1,242 @@
+---
+title: "Working with Waveform Data using fluoR"
+author: "Andrew Tamalunas"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Working with Waveform Data using fluoR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(fluoR)
+```
+
+Calcium indicator methods such as GCaMP produce massive amounts of data; in some cases producing hundreds-of-thousands of data points for a single subject. Further, there is currently no ubiquitous way to organize or analyze this type of data. To even analyze the data, the researcher must:
+
+* Organize the data into a format that is easy to manipulate
+
+* Visualize and explore the data 
+
+* Extract useful data points for further visualization and analysis
+
+The fluoR package gets researchers to the analysis phase more quickly by:
+
+* Providing simple, quick commands to format data for use both with, and without the fluoR package
+
+* Including shortcuts for data exploration and useful visualizations
+
+* Extracting data points and waveform characteristics for summarizing and comparing activity within and between trials
+
+This document explains how to use fluoR's functions to format, extract, and manipulate calcium indicator data. 
+
+# Data: GCaMP
+
+The data included with the fluoR provides a sample of a time series-like dataset exported from Matlab using the [TDTFilter command](https://www.tdt.com/support/sdk.html) with a modified version of [Dr. David Root's Matlab script](https://www.tdt.com/support/EXEpocAveragingExampleDR.html). This data was collected using GCaMP6.
+
+This dataset consists of 11 rows and 814 columns. 10 trials from a pilot study were used, with calcium activity from 4 seconds before and after stimulus onset (0s). 
+
+# Data formatting
+
+In order to use the rest of the package, data must be in a data frame format, with the requirements being:
+
+1. The first column is a measure of time
+
+2. The following columns are recorded values from trials in ascending order that correspond to the times the values were recorded at, with 1 column per trial
+
+Fortunately, the fluoR package includes functions that quickly reformat the data for ease with both user manipulation and use of this package. All formatting commands output this type of data frame.
+
+### Format organized data with format_data
+
+Currently, the only command for formatting data is `format_data`, which takes a matrix of a time measurement in the first column or row, and one trial per column or row in the subsequent columns/rows. A data frame with the first row "Time" and subsequent rows "Trial#" is outputted.
+
+```{r}
+df <- format_data(GCaMP)
+
+### Old table
+GCaMP[1:5, 1:5]
+
+### New table
+df[1:5, 1:5]
+```
+
+Note: the data frame used with the GCalcium package does not have to be labeled the same as the format_data frame. This is simply for ease of calling each trial using outside functions.
+
+# Extracting useful information for analysis
+
+To perform analyses or explore differences in activity waveforms, one must filter and summarize the data. Knowing what wave characteristics to compare can be confusing; as many scientists do not typically work with this type of data. The following commands extract and/or summarize numbers comparisons that have been used in past research. These functions are split into 2 types: vector inputs, and matrix (`format_data` style) inputs.
+
+## Vector 
+
+* `find_peaks` looks for peaks based on inflection points and a simple filter
+
+* `inflect_points` finds the peaks and valleys of waves
+
+* `percent_change` transforms a numeric vector into percent change from a base value
+
+* `z_score` calculates a standard or modified z-score 
+
+### find_peaks
+
+`find_peaks` finds peaks or valleys in waveforms by using inflection points, with filter of 'n' increasing/decreasing points on both sides of each inflection point. A positive numerical input for 'n.points' returns the indices of peaks for the input vector, while a negative value returns indices of valleys.
+
+Let's say we wanted to find all peaks of trial 1 that have 10 consecutive decreasing points on the left and right of each peak, and use these indices to subset the data.
+
+```{r}
+peak.indices <- find_peaks(xvals = df$Trial1, 
+                           n.points = 10)
+
+## Subset using indexing
+peaks.df <- data.frame(
+  times = df$Time[peak.indices],
+  vals = df$Trial1[peak.indices]
+)
+
+head(peaks.df, 4)
+```
+
+### inflect_points
+
+`inflect_points` uses derivatives to find and label the inflection points (peaks and valleys) of a vector, along with the points between them. 
+
+```{r}
+inf.pts <- inflect_points(x = df$Trial1)
+
+print(inf.pts[1:45])
+```
+
+The value -2 indicates a peak, 2 indicates a valley, and 0 indicates a point on the curve between -2 and 2, or vice versa. 
+
+### percent_change
+
+`percent_change` is a simple function that calculates the percent change from a base value.
+
+If we wanted to transform trial 1's values to percent change from the average baseline value for the first trial, we'd enter
+
+```{r}
+baseline.mean <- mean(df$Trial1[df$Time > -4 & df$Time < 0])
+
+perc.change <- percent_change(xvals = df$Trial1,
+                              base.val = baseline.mean)
+
+print(perc.change[1:45])
+```
+
+### z_score
+
+`z_score` is a simple function that transforms a numeric vector to standard or modified z-score values.
+
+Percent change from baseline is not always an effective metric. It normalizes your values, but does not standardize and is very susceptible to outliers.
+
+Let's say we wanted to transform trial 1's values into z-scores, in relation to baseline. This would be done to take the baseline deviance (where there is presumably less activity) into consideration and help reveal significant changes in intensity.
+
+```{r}
+baseline.mean <- mean(df$Trial1[df$Time > -4 & df$Time < 0])
+baseline.sd <- sd(df$Trial1[df$Time > -4 & df$Time < 0])
+
+z.scores <- z_score(xvals = df$Trial1,
+        mu = baseline.mean,
+        sigma = baseline.sd)
+
+print(z.scores[1:45])
+```
+
+Standard z-scores, however, are not always the optimal transformation for fluorescence waveform data. This type of data often includes spikes (outliers), which can cause the mean to be a subpar measure.
+
+To solve this, we can use a median-based modified z-score.
+
+```{r}
+baseline.median <- median(df$Trial1[df$Time > -4 & df$Time < 0])
+baseline.mad <- mad(df$Trial1[df$Time > -4 & df$Time < 0])
+
+mod.z.scores <- z_score(xvals = df$Trial1,
+        mu = baseline.median,
+        sigma = baseline.mad,
+        z.type = 'modified')
+
+print(mod.z.scores[1:45])
+```
+
+## Matrix or Data frame
+
+* `baseline_transform` is a dataframe-based wrapper for the `z_score` and `percent_baseline` commands
+
+* `inflect_points_df` finds provides a summary of the data between each inflection point (half wave)
+
+* `plot_trials` creates a simple plot for a set of trials
+
+* `summarize_trials` calculates a summary statistic; collapsing across trials for each timestamp
+
+### baseline_transform
+
+`baseline_transform` lets the user utilize the `percent_change` and `z_score` commands without isolating the values from a subject's data frame. It also speeds up the process of analyzing multiple trials.
+
+To transform the values from trials 1-5 into percent change, we'd use
+
+```{r}
+t1thru5 <- baseline_transform(dataframe = df,
+                   trials = 1:5,
+                   baseline.times = c(-4, 4),
+                   type = 'percent_change')
+print(head(t1thru5))
+```
+
+Alternatively, we can use `type = z_standard` or `type = z_modified`
+
+### inflect_trials_df
+
+`inflect_trials_df` is a dataframe-based version of `inflect_trials`. This 
+
+### plot_trials
+
+`plot_trials` uses base R graphics to create a quick plot of the trial waves. This is particularly useful when manually looking through the data and comparing trials.
+
+Let's pretend that we introduced a stimulus at the end of trial 6. If we wanted to quickly look at how the subject's behavior was influenced in subsequent trials, we can simply enter
+
+```{r, plot_trials, fig.height = 4, fig.width = 7}
+plot_trials(dataframe = df,
+            trials = 7:10)
+```
+
+### summarize_trials
+
+`summarize_trials` lets the user specify a type of summary statistic (e.g. mean, standard deviation) to compute across a range of trials
+
+For example: let's say we wanted to plot the mean for trials 1-5 and compare them to the mean of trials 6-10.
+
+```{r, summarize_trials, fig.height = 4, fig.width = 7}
+### Find means values across trials 1-5 and 6-10
+summ1 <- summarize_trials(dataframe = df,
+                          trials = 1:5,
+                          summary.type = 'mean')
+summ2 <- summarize_trials(df, 6:10, 'mean')
+
+### Compare trial ranges
+plot(x = summ1$Time,
+     y = summ1$summ.trials,
+     type = 'l',
+     xlim = c(-4, 4),
+     ylim = c(min(c(summ1[,2], summ2[,2])),
+              max(c(summ1[,2], summ2[,2]))),
+     xlab = 'Time',
+     ylab = 'Intensity',
+     col = 'blue') # plot using trials 1-5, using min/max of all trials for y limits
+
+lines(x = summ2$Time,
+      y = summ2$summ.trials,
+      col = 'red') # add lines for 6-10
+
+legend(x = 'topright', 
+       legend = c('Trials 1-5', 'Trials 6-10'),
+       col = c('blue', 'red'),
+       lty = 1,
+       bty = 'o',
+       box.lwd = .01,
+       cex = 0.75)
+```
