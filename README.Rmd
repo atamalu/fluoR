@@ -29,6 +29,10 @@ Calcium imaging methods produce massive datasets that require immense data manip
 install.packages("atamalu/fluoR")
 ```
 
+```{r}
+library(fluoR)
+```
+
 ## Getting started
 
 Since there is currently no ubiquitous way to analyze or format calcium imaging data, most of fluoR's commands require the data frame to be in "fluoR format." This is essentially a transposed time series data frame; where the times of recorded signals are in the first row or column, and the observed values of each trial are in the following rows or columns.
