@@ -165,13 +165,34 @@ print(mod.z.scores[1:45])
 
 ## Matrix or Data frame
 
+* `auc_trials` finds area under the curve for a given set of trials within a
+specified time period
+
 * `baseline_transform` is a dataframe-based wrapper for the `z_score` and `percent_baseline` commands
 
-* `inflect_points_df` finds provides a summary of the data between each inflection point (half wave)
+* `inflect_points_df` finds provides a summary of the data between each 
+inflection point (half wave)
 
 * `plot_trials` creates a simple plot for a set of trials
 
-* `summarize_trials` calculates a summary statistic; collapsing across trials for each timestamp
+* `summarize_trials` calculates a summary statistic; collapsing across trials 
+for each timestamp
+
+### auc_trials 
+
+`auc_trials` calculates area under curve for multiple trials using trapezoidal integration. With time series waveform data, the AUC is a metric that compacts the dimensions of time and intensity into one number.
+
+If we wanted a 1-dimensional quantification for an increase or decrease in neural activity for 2 seconds after event onset, for trials 1-5, we could use
+
+```{r}
+AUCs <- auc_trials(dataframe = df, 
+                   time.range = c(0,2), 
+                   trials = 1:5)
+print(AUCs)
+```
+
+A word of warning: this function uses the pracma package's `trapz` function,
+which may return negative numbers; especially when using centered data. This can be both useful (e.g. comparing pre- and post- event activity) or a pitfall.
 
 ### baseline_transform
 
@@ -181,9 +202,9 @@ To transform the values from trials 1-5 into percent change, we'd use
 
 ```{r}
 t1thru5 <- baseline_transform(dataframe = df,
-                   trials = 1:5,
-                   baseline.times = c(-4, 4),
-                   type = 'percent_change')
+                              trials = 1:5,
+                              baseline.times = c(-4, 4),
+                              type = 'percent_change')
 print(head(t1thru5))
 ```
 
