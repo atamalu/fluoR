@@ -19,6 +19,8 @@ format_data <- function(dataframe) {
     dataframe <- t(dataframe)
     dataframe <- as.data.frame(dataframe)
     row.names(dataframe) <- c()
+  } else {
+    dataframe <- as.data.frame(dataframe)
   }
 
   ### Label time

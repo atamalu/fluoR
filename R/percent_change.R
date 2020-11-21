@@ -17,6 +17,6 @@
 #' @export
 
 percent_change <- function(xvals, base.val){
-  p.baseline <- ( (xvals - base.val) / base.val) * 100
+  p.baseline <- ( (xvals - base.val) / abs(base.val)) * 100
   return(p.baseline)
 }

@@ -170,8 +170,9 @@ specified time period
 
 * `baseline_transform` is a dataframe-based wrapper for the `z_score` and `percent_baseline` commands
 
-* `inflect_points_df` finds provides a summary of the data between each 
-inflection point (half wave)
+* `distance_between_peaks` finds distance between peak indices along with differences in time and intensity
+
+* `inflect_points_trials` finds inflection points for a range of trials
 
 * `plot_trials` creates a simple plot for a set of trials
 
@@ -208,7 +209,18 @@ t1thru5 <- baseline_transform(dataframe = df,
 print(head(t1thru5))
 ```
 
-Alternatively, we can use `type = 'z_standard'` or `type = 'z_modified'`
+Alternatively, we can use `type = 'z_standard'` for standard z-scores or `type = 'z_modified'` for median-based modified z-scores.
+
+### distance_between_peaks
+
+`distance_between_peaks` finds distances between peak indices along with differences in time and intensity. This can be used to find changes in wave frequency after stimulus exposure and provides a single-unit metric for traditional statistical analyses.
+
+```{r}
+### Find distance between peaks for 4s post-stimulus onset for trial 2
+distance_between_peaks(dataframe = df, 
+                       trial = 2, 
+                       time.range = c(0, 4))
+```
 
 ### inflect_points_trials
 

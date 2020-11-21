@@ -19,7 +19,7 @@ inflect_points <- function(x){
   inf.pts <- diff(sign(diff(x, na.pad = TRUE)))
 
   # Add NAs since we removed 2 points by doing first difference twice
-  inf.pts <- append(inf.pts, 0)
+  inf.pts <- append(inf.pts, 0, after = 0)
   inf.pts <- append(inf.pts, 0)
 
   return(inf.pts)
