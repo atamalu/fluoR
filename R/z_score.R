@@ -18,21 +18,24 @@
 #' @export
 
 z_score <- function(xvals, mu = NULL, sigma = NULL,
-         z.type = 'standard',
-         mad.const = 1.4826){
+                    z.type = 'standard', mad.const = 1.4826){
 
   ### mean
-  if(is.null(mu) & z.type == 'modified'){
-    mu <- median(xvals)
-  } else {
-    mu <- mean(xvals)
+  if(is.null(mu)){
+    if(z.type == 'modified'){
+      mu <- median(xvals)
+    } else {
+      mu <- mean(xvals)
+    }
   }
 
   ### sd/mad
-  if(is.null(sigma) & z.type == 'modified'){
-    sigma <- mad(x = xvals, constant = mad.const)
-  } else {
-    sigma <- sd(x = xvals)
+  if(is.null(sigma)){
+    if(z.type == 'modified'){
+      sigma <- mad(x = xvals, constant = mad.const)
+    } else {
+      sigma <- sd(x = vals)
+    }
   }
 
   ### Formula follows user input
