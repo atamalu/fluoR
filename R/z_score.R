@@ -34,7 +34,7 @@ z_score <- function(xvals, mu = NULL, sigma = NULL,
     if(z.type == 'modified'){
       sigma <- mad(x = xvals, constant = mad.const)
     } else {
-      sigma <- sd(x = vals)
+      sigma <- sd(x = xvals)
     }
   }
 

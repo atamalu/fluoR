@@ -24,6 +24,8 @@ Calcium imaging methods produce massive datasets that require immense data manip
 
 The Examples vignette explains these functions and more in greater detail. This can be viewed using `browseVignettes('fluoR')`.
 
+There is also [a fluoR manual in Gitbook format](https://bookdown.org/anta8363/fluoR_bookdown/) that I will be regularly updating over the next few months.
+
 ## Installation
 
 ```{r, eval = FALSE}

@@ -21,6 +21,10 @@ any type of waveform data. A few functions include:
 The Examples vignette explains these functions and more in greater
 detail. This can be viewed using `browseVignettes('fluoR')`.
 
+There is also [a fluoR manual in Gitbook
+format](https://bookdown.org/anta8363/fluoR_bookdown/) that I will be
+regularly updating over the next few months.
+
 Installation
 ------------
 
@@ -62,7 +66,7 @@ head( summarize_trials(dataframe = df, trials = 1:4, summary.type = 'median') )
 ``` r
 ### Where are the inflection points (peaks/valleys) in trial 1?
 head( inflect_points(x = df$Trial1) )
-#> [1] 0 2 0 0 0 0
+#> [1] 0 0 2 0 0 0
 ```
 
 ``` r
@@ -74,5 +78,5 @@ head( find_peaks(xvals = df$Trial1, n.points = 10) )
 ``` r
 ### Transform raw input values into modified z-scores (using median & mad) for trial 1
 head( z_score(xvals = df$Trial1, z.type = 'modified') )
-#> [1] 0.5840103 0.4935298 0.4770788 0.5346573 0.6470724 0.7704549
+#> [1] 0.5840183 0.4935366 0.4770854 0.5346646 0.6470813 0.7704654
 ```

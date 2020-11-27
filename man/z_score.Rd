@@ -4,13 +4,7 @@
 \alias{z_score}
 \title{Transform values into z scores}
 \usage{
-z_score(
-  xvals,
-  mu = NULL,
-  sigma = NULL,
-  z.type = "standard",
-  mad.const = 1.4826
-)
+z_score(xvals, mu = NULL, sigma = NULL, z.type = "standard")
 }
 \arguments{
 \item{xvals}{a vector of values to be transformed into z scores}
@@ -20,9 +14,6 @@ z_score(
 \item{sigma}{a specified value for the input vector to be scaled by}
 
 \item{z.type}{the type of summary statistic being used for mu}
-
-\item{mad.const}{the multiplier constant for computing the
-median absolute deviation (MAD) if using a modified z score}
 }
 \value{
 the input vector transformed into z scores
