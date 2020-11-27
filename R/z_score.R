@@ -8,8 +8,6 @@
 #' @param mu a specified value for the input vector to be centered at
 #' @param sigma a specified value for the input vector to be scaled by
 #' @param z.type the type of summary statistic being used for mu
-#' @param mad.const the multiplier constant for computing the
-#' median absolute deviation (MAD) if using a modified z score
 #' @return the input vector transformed into z scores
 #' @examples
 #' df <- format_data(GCaMP)
@@ -18,28 +16,40 @@
 #' @export
 
 z_score <- function(xvals, mu = NULL, sigma = NULL,
-                    z.type = 'standard', mad.const = 1.4826){
+                    z.type = 'standard'){
 
   ### mean
   if(is.null(mu)){
     if(z.type == 'modified'){
       mu <- median(xvals)
-    } else {
+    } else if (z.type == 'standard') {
       mu <- mean(xvals)
+    } else {
+      print('Invalid z type. Please specify "standard" or "modified"')
     }
   }
 
   ### sd/mad
   if(is.null(sigma)){
     if(z.type == 'modified'){
-      sigma <- mad(x = xvals, constant = mad.const)
-    } else {
+      sigma <- median(abs(xvals - median(xvals)))
+    } else if (z.type == 'standard') {
       sigma <- sd(x = xvals)
+    } else {
+      print('Invalid z type. Please specify "standard" or "modified"')
     }
   }
 
   ### Formula follows user input
-  z.score <- (xvals - mu) / sigma
+  # if modified, mu = median & sigma = mad
+  # if standard, mu = mean & sigma = sd
+    if(z.type == 'modified'){
+      z.score <- 0.6745 * (xvals - mu) / sigma
+    } else if (z.type == 'standard') {
+      z.score <- (xvals - mu) / sigma
+    } else {
+      print('Invalid z type. Please specify "standard" or "modified"')
+    }
 
   return(z.score)
 
