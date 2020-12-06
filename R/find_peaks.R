@@ -25,7 +25,11 @@
 
 find_peaks <- function (xvals, n.points = 3){
 
-  xvals <- ifelse(n.points >= 0, xvals, -xvals)
+  if(n.points >= 0){
+    xvals = xvals
+  } else {
+    xvals = -xvals
+  }
 
   # define curves and peaks
   curves <- diff(sign(diff(xvals, na.pad = FALSE)))
