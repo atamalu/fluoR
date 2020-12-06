@@ -25,6 +25,8 @@
 
 find_peaks <- function (xvals, n.points = 3){
 
+  xvals <- ifelse(n.points >= 0, xvals, -xvals)
+
   # define curves and peaks
   curves <- diff(sign(diff(xvals, na.pad = FALSE)))
   peakz <- sapply(which(curves < 0), FUN = function(i){
@@ -35,9 +37,9 @@ find_peaks <- function (xvals, n.points = 3){
     a <- ifelse(a < length(xvals), a, length(xvals))
     if(all(xvals[c(b : i, (i + 2) : a)] <= xvals[i + 1])){
       return(i + 1)
-      } else {
-        return(numeric(0))
-      }
+    } else {
+      return(numeric(0))
+    }
 
   })
 
