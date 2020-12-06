@@ -29,7 +29,7 @@ auc_trials <- function(dataframe, trials, time.range){
   AUCs <- sapply(trial.inds, function(trial){
     ret = trapz(x = dataframe[,1], y = dataframe[,trial])
   })
-  names(AUCs) <- paste0('Trial', trial.inds)
+  names(AUCs) <- paste0('Trial', trials)
 
   return(AUCs)
 
